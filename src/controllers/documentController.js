@@ -56,6 +56,7 @@ export const addNewDocument = async (req, res) => {
                 isPrivate: true,
             })
             .returning();
+
         // tạo quyền cho người dùng bằng cách thêm 1 bản ghi cho bảng document_permission
         await db
             .insert(documentsPermissions)
@@ -78,9 +79,37 @@ export const addNewDocument = async (req, res) => {
 
 export const updateDocument = async (req, res) => {
     try {
-        const ds = [{ title: "document 1", content: "hahah" }]
+        //lấy dữ liệu từ req
+
+        const { title } = req.body;
+
+        const { documentId } = req.params;
+        if (!documentId) {
+            return res.status(400).json({ message: "thiếu id của tài liệu không thể cập nhật" });
+        }
+
+        //kiem tra document co ton tai khong
+        const existingDocument = await db
+            .select()
+            .from(documents)
+            .where(eq(documents.id, documentId))
+            .limit(1);
+
+        if (!existingDocument) {
+            return res.status(400).json({ message: "id tài liệu không hợp lệ" });
+        }
+
+        //cập nhật title
+        const documentUpdate = await db
+            .update(documents)
+            .set({
+                title,
+            })
+            .where(eq(documents.id, documentId))
+            .returning();
+
         return res.status(200).json({
-            ds,
+            id: documentUpdate[0].id,
         });
     } catch (error) {
         console.error("Lỗi khi gọi documents", error);
@@ -90,9 +119,27 @@ export const updateDocument = async (req, res) => {
 
 export const removeDocument = async (req, res) => {
     try {
-        const ds = [{ title: "document 1", content: "hahah" }]
+        const { documentId } = req.params;
+
+        //kiem tra document co ton tai khong
+        const existingDocument = await db
+            .select()
+            .from(documents)
+            .where(eq(documents.id, documentId))
+            .limit(1);
+
+        if (!existingDocument) {
+            return res.status(400).json({ message: "id tài liệu không hợp lệ" });
+        }
+
+        //xoa document
+        const deleteDocument = await db.delete(documents).where(eq(documents.id, documentId)).returning();
+
+        //xoa lien ket giua user vao document
+        await db.delete(documentsPermissions).where(eq(documentsPermissions.documentId, deleteDocument[0].id));
+
         return res.status(200).json({
-            ds,
+
         });
     } catch (error) {
         console.error("Lỗi khi gọi documents", error);

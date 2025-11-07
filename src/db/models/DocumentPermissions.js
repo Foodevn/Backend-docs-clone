@@ -9,7 +9,7 @@ export const documentsPermissions = pgTable("document_permissions", {
     documentId: integer("document_id").notNull().references(() => documents.id, { onDelete: "cascade" }),
 
     permission: varchar("permission", { length: 50 }).notNull(),
-    canShare: boolean("can_share").notNull(),
+    canShare: boolean("can_share"),
 
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at").defaultNow().notNull(),

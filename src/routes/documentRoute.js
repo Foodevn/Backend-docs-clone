@@ -10,9 +10,9 @@ import {
 const route = express.Router();
 
 route.get("/", getAllDocuments)
-route.get("/:id", getDocuments)
+route.get("/:documentId", getDocuments)
 route.post("/", addNewDocument)
-route.put("/", updateDocument)
-route.delete("/:id", removeDocument)
+route.put("/:documentId", updateDocument)
+route.delete("/:documentId", removeDocument)
 
 export default route;
