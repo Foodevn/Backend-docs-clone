@@ -1,0 +1,1 @@
+ALTER TABLE "document_permissions" DROP COLUMN "can_share";
