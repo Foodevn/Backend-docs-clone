@@ -8,6 +8,7 @@ import { testDrizzleConnection } from "./db/index.js";
 import authRoute from "./routes/authRoute.js";
 import userRoute from "./routes/userRoute.js";
 import documentRoute from "./routes/documentRoute.js";
+import documentPermissionRoute from "./routes/documentPermissionRoute.js";
 
 import { protectedRoute } from "./middlewares/authMiddleware.js";
 
@@ -30,6 +31,7 @@ app.use("/api/auth", authRoute);
 app.use(protectedRoute);
 app.use("/api/users", userRoute);
 app.use("/api/documents", documentRoute);
+app.use("/api/documentpermissions", documentPermissionRoute)
 
 
 testDrizzleConnection().then(() => {

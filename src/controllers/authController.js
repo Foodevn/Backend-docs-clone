@@ -45,6 +45,7 @@ export const signUp = async (req, res) => {
         return res.status(500).json({ message: "Lỗi hệ thống" });
     }
 };
+
 export const signIn = async (req, res) => {
     try {
         // lấy inputs

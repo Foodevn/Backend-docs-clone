@@ -1,4 +1,4 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "../db/index.js";
 import { documentsPermissions } from "../db/models/DocumentPermissions.js";
 import { documents } from "../db/models/Documents.js";
@@ -6,15 +6,20 @@ import { documents } from "../db/models/Documents.js";
 export const getAllDocuments = async (req, res) => {
     try {
         const user = req.user;
-
-        // lấy những id của tài liệu liên quan đến người dùng
-        const documentPermissions = await db.select()
+        const dsDocuments = await db.select({
+            id: documents.id,
+            title: documents.title,
+            content: documents.content,
+            isPrivate: documents.isPrivate,
+            createdAt: documents.createdAt,
+            updatedAt: documents.updatedAt,
+            permission: documentsPermissions.permission,
+        })
             .from(documentsPermissions)
+            .innerJoin(documents, eq(documentsPermissions.documentId, documents.id))
             .where(eq(documentsPermissions.userId, user.id));
-        const documentIds = documentPermissions.map(d => { return d.documentId });
 
-        //lấy ra danh sách documnet theo những id
-        const dsDocuments = await db.select().from(documents).where(inArray(documents.id, documentIds));
+        // console.log(dsDocuments)
 
         // trả lại danh sách 
         return res.status(200).json({
@@ -120,6 +125,8 @@ export const updateDocument = async (req, res) => {
 export const removeDocument = async (req, res) => {
     try {
         const { documentId } = req.params;
+        const permission = req.body.permission;
+        const user = req.user;
 
         //kiem tra document co ton tai khong
         const existingDocument = await db
@@ -132,11 +139,18 @@ export const removeDocument = async (req, res) => {
             return res.status(400).json({ message: "id tài liệu không hợp lệ" });
         }
 
-        //xoa document
-        const deleteDocument = await db.delete(documents).where(eq(documents.id, documentId)).returning();
-
         //xoa lien ket giua user vao document
-        await db.delete(documentsPermissions).where(eq(documentsPermissions.documentId, deleteDocument[0].id));
+        await db.delete(documentsPermissions).where(
+            and(
+                eq(documentsPermissions.documentId, documentId),
+                eq(documentsPermissions.userId, user.id)
+            )
+        );
+
+        if (permission == "admin") {
+            //xoa document
+            await db.delete(documents).where(eq(documents.id, documentId));
+        }
 
         return res.status(200).json({
 
