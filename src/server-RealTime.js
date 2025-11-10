@@ -35,7 +35,7 @@ io.on("connection", (socket) => {
         console.log(`📄 Client ${socket.id} joined document: ${docId}`);
     });
 
-    // 2️⃣ Client gửi thay đổi nội dung
+    //Client gửi thay đổi nội dung
     socket.on("editDoc", ({ docId, content }) => {
         console.log(`✏️ Document ${docId} updated by ${socket.id}`);
 
@@ -46,7 +46,7 @@ io.on("connection", (socket) => {
         socket.to(docId).emit("receiveUpdate", content);
     });
 
-    // 3️⃣ Client ngắt kết nối
+    //Client ngắt kết nối
     socket.on("disconnect", () => {
         console.log("❌ Client disconnected:", socket.id);
     });
