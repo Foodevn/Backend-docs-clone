@@ -6,7 +6,7 @@
     "dev": "nodemon src/server",
     "dev-realtime": "nodemon src/server-RealTime",
     "start": "node src/server",
-    "start-realtime": "nodemon src/server-RealTime",
+    "start-realtime": "node src/server-RealTime",
     "dbgen": "npx drizzle-kit generate",
     "dbpush": "npx drizzle-kit push",
     "dbstudio": "npx drizzle-kit studio"
