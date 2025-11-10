@@ -21,7 +21,7 @@ const documents = {};
 io.on("connection", (socket) => {
     console.log("✅ Client connected:", socket.id);
 
-    // 1️⃣ Client tham gia vào room của document
+    //Client tham gia vào room của document
     socket.on("joinDoc", (docId) => {
         socket.join(docId);
 
