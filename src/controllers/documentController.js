@@ -33,9 +33,13 @@ export const getAllDocuments = async (req, res) => {
 
 export const getDocuments = async (req, res) => {
     try {
-        const ds = [{ title: "document 1", content: "hahah" }]
+        const { documentId } = req.params;
+        const document = await db.select().from(documents).where(eq(documents.id, documentId))
+        if (!document[0]) {
+            return res.status(404).json({ message: 'Không tìm thấy tài liệu này' })
+        }
         return res.status(200).json({
-            ds,
+            document: document[0],
         });
     } catch (error) {
         console.error("Lỗi khi gọi documents", error);

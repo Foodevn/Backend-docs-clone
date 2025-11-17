@@ -25,13 +25,15 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 
 //public routes
+app.use("/", (_, res) => { res.send('<h1>Hello world!</h1>') })
 app.use("/api/auth", authRoute);
 
 // private routes
 app.use(protectedRoute);
 app.use("/api/users", userRoute);
 app.use("/api/documents", documentRoute);
-app.use("/api/documentpermissions", documentPermissionRoute)
+app.use("/api/documentpermissions", documentPermissionRoute);
+
 
 
 testDrizzleConnection().then(() => {
