@@ -114,13 +114,32 @@ export const addUser = async (req, res) => {
 export const updatePermission = async (req, res) => {
     try {
         const { documentId } = req.params;
+        const { userId, role } = req.body;
+        //kiểm tra xem quyền này đã có chưa
+        const checkExisting = await db.select().from(documentsPermissions).where(
+            and(
+                eq(documentsPermissions.userId, userId),
+                eq(documentsPermissions.documentId, documentId)
+            )
+        )
+        if (!checkExisting[0]) {
+            return res.status(400).json({ message: "email đã có quyền trong tài liệu" })
+        }
 
-
-
-
-        return res.status(200).json({
-
-        })
+        //chang permission
+        const ChanngePermission = await db
+            .update(documentsPermissions)
+            .set({
+                permission: role,
+            })
+            .where(
+                and(
+                    eq(documentsPermissions.userId, userId),
+                    eq(documentsPermissions.documentId, documentId)
+                )
+            )
+            .returning();
+        return res.status(200).json({})
     } catch (error) {
         console.error("Lỗi khi gọi documents permission", error);
         return res.status(500).json({ message: "Lỗi hệ thống" });

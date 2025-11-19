@@ -25,7 +25,7 @@ app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
 
 //public routes
-app.use("/", (_, res) => { res.send('<h1>Hello world!</h1>') })
+app.get("/", (_, res) => { res.send('Hello world!') })
 app.use("/api/auth", authRoute);
 
 // private routes
